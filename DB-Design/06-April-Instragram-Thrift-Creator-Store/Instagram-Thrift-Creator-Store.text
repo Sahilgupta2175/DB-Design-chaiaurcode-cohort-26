@@ -1,0 +1,109 @@
+Customer[icon: user-round] {
+  id Serial Primary Key
+  first_name Varchar(50)
+  last_name Varchar(50)
+  email Varchar(322) Unique
+  phone_no Varchar(15)
+  createdAt timestamp
+  updatedAt timestamp
+}
+
+Customer_Address[icon: book] {
+  id Serial Primary Key
+  customer_id Foreign Key
+  street_no Varchar(10)
+  street_name Varchar(50)
+  city Varchar(50)
+  pin_code Varchar(7)
+  state Varchar(50)
+  country Varchar(50)
+  is_default Boolean
+}
+
+Customer.id < Customer_Address.customer_id
+
+Category[icon: box] {
+  id Serial Primary Key
+  name Varchar(50)
+}
+
+Product[icon: box] {
+  id Serial Primary Key
+  category_id Foreign Key
+  name Varchar(50)
+  description Text
+  type Enum ('Thrift', 'Handmade')
+  conditional_description Text ('Thrift')
+  price Decimal (10, 2)
+  is_active Boolean
+  createdAt Timestamp
+}
+
+Product_Variant[icon: box] {
+  id Serial Primary Key
+  product_id Foreign Key
+  size Varchar(5)
+  color Varchar(10)
+  stock_quantity Int
+  sku Varchar(50) Unique // sku -> stock keeping unit (TSH_RED_MED -> T-shirt red medium)
+}
+
+Product_Image[icon: image] {
+  id Serial Primary Key
+  product_id Foreign Key
+  image_url Text
+  is_primary Boolean
+}
+
+Product.category_id > Category.id
+Product.id < Product_Variant.product_id
+Product.id < Product_Image.product_id
+
+Order[icon: list-ordered] {
+  id Serial Primary Key
+  customer_id Foreign Key
+  order_date Timestamp
+  total_amount Decimal (10, 2)
+  order_status Enum ('Pending', 'Confirmed', 'Completed', 'Cancelled')
+  shipping_name Varchar(50)
+  shipping_phone Varchar(15)
+  shipping_address Text 
+}
+
+Order_Item[icon: list-ordered] {
+  id Serial Primary Key
+  order_id Foreign Key
+  product_id Foreign Key
+  product_variant_id Foreign Key
+  order_quantity Int
+  price_at_purchase Decimal (10, 2)
+}
+
+Order.id < Order_Item.order_id
+Order.customer_id > Customer.id
+Order_Item.product_id > Product.id
+Order_Item.product_variant_id > Product_Variant.id
+
+Payment[icon: payment] {
+  id Serial Primary Key
+  order_id Foreign Key
+  payment_type Enum ('UPI', 'Card', 'Net Banking', 'COD')
+  payment_amount Decimal (10, 2)
+  transaction_id Varchar(100)
+  transaction_status Enum ('Pending', 'Paid', 'Failed', 'Refund')
+  payment_date Timestamp
+}
+
+Payment.order_id > Order.id
+
+Shipment[icon: truck] {
+  id Serial Primary Key
+  order_id Foreign Key
+  courier_name Varchar(50)
+  courier_tracking_number Varchar(50)
+  courier_status Enum ('Packed', 'Shipped', 'Delivered', 'Returned')
+  shippedAt Timestamp
+  deliveredAt Timestamp
+}
+
+Shipment.order_id - Order.id

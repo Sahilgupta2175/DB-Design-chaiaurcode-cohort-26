@@ -1,0 +1,121 @@
+Buildings [icon: building] {
+  id Serial Primary Key
+  name Varchar(50) Not Null
+  address Text
+  city Varchar(50)
+  total_floors Int
+  createdAt Timestamp
+}
+
+Floors [icon: layers] {
+  id Serial Primary Key
+  building_id Foregin Key
+  floor_no Int
+  floor_label Varchar(30)
+  Unique (building_id, floor_no)
+}
+
+Elevator_shaft [icon: columns] {
+  id Serial Primary Key
+  building_id Foregin Key
+  shaft_code Varchar(20)
+  Unique (building_id, shaft_code)
+}
+
+Elevator [icon: arrow-up-down] {
+  id Serial Primary Key
+  shaft_id Foregin Key 
+  elevator_code Varchar(30)
+  capacity Int
+  max_passengers Int
+  installed_on Timestamp
+  is_Active Boolean
+}
+
+Elevator_Floor_service [icon: link] {
+  elevator_id Foregin Key
+  floor_id Foregin Key
+  is_Stop_enabled Boolean
+  Primary_key (elevator_id, floor_id)
+}
+
+Users [icon: user] {
+  id Serial Primary Key
+  name Varchar(100)
+  user_type Enum ('Employee', 'Visitor', 'Patient', 'Resident')
+  phone_no Varchar(15)
+}
+
+Floor_requests [icon: bell] {
+  id Serial Primary Key
+  user_id Foregin Key 
+  origin_floor_id Foregin Key
+  destination_floor_id Foregin Key
+  diirection Enum ('Up', 'Down')
+  status Enum ('Pending', 'Assigned', 'Completed', 'Cancelled')
+  requested_At Timestamp
+}
+
+Ride_assignment [icon: clipboard-check] {
+  id Serial Primary Key
+  floor_request_id Foregin Key
+  elevator_id Foregin Key
+  assigned_At Timestamp
+  estimated_wait_sec Int
+}
+
+Rides_logs [icon: route] {
+  id Serial Primary Key
+  assignment_id Foregin Key
+  elevator_id Foregin Key
+  from_floor_id Foregin Key
+  to_floor_id Foregin Key
+  pickup_time Timestamp
+  dropoff_time Timestamp
+  passenger_count Int
+  ride_status Varchar(20)
+}
+
+Elevator_status_history [icon: activity] {
+  id Serial Primary Key
+  elevator_id Foregin Key
+  status Enum ('Idle', 'Moving', 'Maintenance', 'Disabled')
+  current_floor_id Foregin Key
+  started_At Timestamp
+  ended_At Timestamp
+}
+
+Maintenance_records [icon: wrench] {
+  id Serial Primary Key
+  elevator_id Foregin Key
+  maintenance_type Enum ('Routine', 'Repair', 'Inspection')
+  description Text
+  technician_name Varchar(100)
+  started_At Timestamp
+  ended_At Timestamp
+  status Enum ('Scheduled', 'In_progress', 'Completed')
+}
+
+Buildings.id < Floors.id
+Buildings.id < Elevator_shaft.building_id
+
+Elevator_shaft.id - Elevator.shaft_id
+
+Elevator.id < Elevator_Floor_service.elevator_id 
+
+Floors.id < Elevator_Floor_service.floor_id
+
+Users.id < Floor_requests.user_id
+
+Floors.id < Floor_requests.origin_floor_id
+Floors.id < Floor_requests.destination_floor_id
+
+Floor_requests.id - Ride_assignment.floor_request_id
+
+Elevator.id < Ride_assignment.elevator_id
+
+Ride_assignment.id - Rides_logs.assignment_id
+
+Elevator.id < Elevator_status_history.elevator_id
+
+Elevator.id < Maintenance_records.elevator_id

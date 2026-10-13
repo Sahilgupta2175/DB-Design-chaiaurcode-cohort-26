@@ -1,0 +1,112 @@
+Vehicle_categories [icon: car] {
+  id Serial Primary Key
+  name Enum ('Bike', 'Car', 'Cab', 'SUV', 'EV')
+  description Text 
+}
+
+Vehicles [icon: car] {
+  id Serial Primary Key
+  registration_number Varchar (20) Unique Not Null
+  vehicle_category_id Foreign Key
+  owner_name Varchar (100) Not Null
+  phone_no Varchar(15)
+}
+
+Access_categories [icon: access] {
+  id Serial Primary Key
+  name Enum ('General', 'Cosplayer', 'Exhibitor', 'Creator', 'VIP', 'Staff')
+  is_fee_waived Boolean
+}
+
+Parking_zone [icon: parking] {
+  id Serial Primary Key
+  name Varchar(30) Not Null
+  description Text
+}
+
+Parking_levels [icon: parking] {
+  id Serial Primary Key
+  zone_id Foreign Key
+  level_number Int Not Null
+}
+
+Spot_categories [icon: car] {
+  id Serial Primary Key
+  name Enum ('Bike', 'Car', 'Large', 'EV Charging')
+  has_ev_charger Boolean
+}
+
+Parking_spot [icon: parking] {
+  id Serial Primary Key
+  level_id Foreign Key
+  spot_category_id Foreign Key
+  reserved_for_access_category_id Foreign Key
+  spot_code Varchar(20)
+  status Enum ('Available', 'Occupied', 'Maintenance')
+}
+
+Vehicle_spot_access_category [icon: car] {
+  vehicle_category_id Foreign Key
+  spot_category_id Foreign Key
+}
+
+Parking_sessions [icon: timeline] {
+  id Serial Primary Key
+  vehicle_id Foreign Key
+  spot_id Foreign Key
+  access_category_id Foreign Key
+  entry_time TimeStamp
+  exit_time TimeStamp
+  duration_minutes TimeStamp
+  amount Decimal (8, 2)
+  status Enum('Active', 'Completed')
+}
+
+Parking_tickets [icon: ticket] {
+  id Serial Primary Key
+  session_id Foreign Key
+  ticket_number Varchar(20)
+  issuedAt TimeStamp
+}
+
+Pricing_rules [icon: money] {
+  id Serial Primary Key
+  vehicle_category_id Foreign Key
+  rate_per_hrs Decimal (6, 2)
+  daily_rate Decimal (8, 2)
+}
+
+Payments [icon: payment] {
+  id Serial Primary Key
+  session_id Foreign Key
+  amount Decimal (8, 2)
+  method Enum ('Cash', 'UPI', 'Card', 'Waived')
+  status Enum ('Pending', 'Paid', 'Failed', 'Waived')
+  paidAt TimeStamp
+}
+
+Vehicle_categories.id < Vehicles.vehicle_category_id
+
+Vehicle_categories.id < Pricing_rules.vehicle_category_id
+
+Vehicle_categories.id <> Vehicle_spot_access_category.vehicle_category_id
+
+Spot_categories.id <> Vehicle_spot_access_category.spot_category_id
+
+Parking_zone.id < Parking_levels.zone_id
+
+Parking_levels.id < Parking_spot.level_id
+
+Spot_categories.id < Parking_spot.spot_id
+
+Access_categories.id < Parking_spot.reserved_for_access_category_id
+
+Access_categories.id < Parking_sessions.access_category_id
+
+Vehicles.id < Parking_sessions.vehicle_id
+
+Parking_spot.id < Parking_sessions.spot_id
+
+Parking_sessions.id - Parking_tickets.session_id
+
+Parking_sessions.id < Payments.session_id

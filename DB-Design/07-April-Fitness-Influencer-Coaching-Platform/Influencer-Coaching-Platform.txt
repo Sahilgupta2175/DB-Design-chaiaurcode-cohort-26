@@ -1,0 +1,141 @@
+Client[icon: user-round] {
+  id Serial Primary Key
+  first_name Varchar(50)
+  last_name Varchar(50)
+  email Varchar(322) Unique
+  phone_no Varchar(15)
+  gender Varchar(10)
+  DOB Date
+  createdAt Timestamp
+}
+
+Trainer[icon: user-round] {
+  id Serial Primary Key
+  first_name Varchar(50)
+  last_name Varchar(50)
+  email Varchar(322) Unique
+  phone_no Varchar(15)
+  gender Varchar(10)
+  DOB Date
+  specialization Varchar(50)
+  bio_description Text
+  instagram_handle Varchar(50)
+  createdAt Timestamp
+}
+
+Plan[icon: strategy] {
+  id Serial Primary Key
+  trainer_id Foreign Key
+  name Varchar(50)
+  description Text
+  plan_type Enum ('Consultant_only', 'Coaching', 'Live_session')
+  plan_duration_days Int
+  price Decimal (10, 2)
+  includes_workout Boolean
+  includes_diet Boolean
+  createdAt Timestamp
+}
+
+Plan.trainer_id > Trainer.id
+
+Workout_plan[icon: strategy] {
+  id Serial Primary Key
+  plan_id Foreign Key
+  name Varchar(50)
+  description Text 
+  exercise_description_per_day Text
+  createdAt Timestamp
+}
+
+Workout_plan.plan_id - Plan.id
+
+Diet_plan[icon: strategy] {
+  id Serial Primary Key
+  plan_id Foreign Key
+  name Varchar(50)
+  description Text
+  diet_description_per_day Text
+  calorie_target Int
+  createdAt Timestamp
+}
+
+Diet_plan.plan_id - Plan.id
+
+Subscription[icon: azure-user-subscriptions] {
+  id Serial Primary Key
+  client_id Foreign Key
+  plan_id Foreign Key
+  trainer_id Foreign Key
+  start_date Date
+  end_date Date
+  status Enum ('Active', 'Expired', 'Cancelled')
+  createdAt Timestamp
+}
+
+Subscription.client_id > Client.id
+Subscription.plan_id > Plan.id
+Subscription.trainer_id > Trainer.id
+
+Payment[icon: payment] {
+  id Serial Primary Key
+  subscription_id Foreign Key
+  payment_amount Decimal (10, 2)
+  payment_method Enum ('UPI', 'Net Banking', 'Card')
+  transaction_id Varchar(100)
+  transaction_status Enum ('Pending', 'Completed', 'Failed', 'Refund')
+  payment_date Timestamp
+}
+
+Payment.subscription_id > Subscription.id
+
+Session[icon: timer] {
+  id Serial Primary Key
+  client_id Foreign Key
+  trainer_id Foreign Key
+  subscription_id Foreign Key
+  session_type Enum ('Consultant', 'Coaching_session', 'Live_group_session')
+  scheduled_at Date
+  duration_minutes Int
+  session_mode Enum ('In_Person', 'Video_call')
+  meeting_link Varchar(100)
+  status Enum ('Scheduled', 'Completed', 'Cancelled', 'No_show')
+}
+
+Session.client_id > Client.id
+Session.trainer_id > Trainer.id
+Session.subscription_id > Subscription.id
+
+Check_in[icon: square-arrow-up-right] {
+  id Serial Primary Key
+  client_id Foreign Key
+  subscription_id Foreign Key
+  checkin_date Timestamp
+  weight_kg Decimal (5, 2)
+  body_fat_percentage Decimal (5, 2)
+  chest_cm Decimal (5, 2)
+  waist_cm Decimal (5, 2)
+  hip_cm Decimal (5, 2)
+  arm_cm Decimal (5, 2)
+  progress_photo_url Varchar(100)
+  client_comments Text
+  submitted_at Timestamp
+}
+
+Check_in.subscription_id > Subscription.id
+Check_in.client_id > Client.id
+
+Trainer_notes[icon: book] {
+  id Serial Primary Key
+  trainer_id Foreign Key
+  client_id Foreign Key
+  session_id Foreign Key
+  checkin_id Foreign Key
+  note_type Enum ('Session_feedback', 'Checkin_feedback', 'General_feedback')
+  description Text
+  createdAt Timestamp
+}
+
+Trainer_notes.trainer_id > Trainer.id
+Trainer_notes.client_id > Client.id
+Trainer_notes.session_id > Session.id
+Trainer_notes.checkin_id > Check_in.id

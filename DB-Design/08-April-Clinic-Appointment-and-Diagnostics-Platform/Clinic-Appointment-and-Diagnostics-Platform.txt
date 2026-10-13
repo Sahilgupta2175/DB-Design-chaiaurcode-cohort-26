@@ -1,0 +1,128 @@
+Department[icon: building] {
+  id Serial Primary Key
+  name Varchar(100) Unique Not Null
+  description Text
+}
+
+Specialist[icon: type] {
+  id Serial Primary Key
+  department_id Foreign Key
+  name Varchar(100) Not Null
+  description Text
+}
+
+Specialist.department_id > Department.id
+
+Doctor[icon: user] {
+  id Serial Primary Key
+  specialist_id Foreign Key
+  department_id Foreign Key 
+  first_name Varchar(50) Not Null
+  last_name Varchar(50) Not Null
+  email Varchar(322) Not Null Unique
+  phone_no Varchar(15) Not Null
+  qualification Varchar(100) Not Null
+  experience Int
+  consultation_fee Decimal (5, 2)
+  is_active Boolean
+}
+
+Doctor.department_id > Department.id
+Doctor.specialist_id > Specialist.id
+
+Patient[icon: user] {
+  id Serial Primary Key
+  first_name Varchar(50) Not Null
+  last_name Varchar(50) Not Null
+  date_of_birth Date 
+  gender Enum ('Male', 'Female', 'Other')
+  email Varchar(322) Not Null Unique
+  phone_no Varchar(15) Not Null
+  address Text
+  blood_group Varchar(5) Not Null
+  createdAt TimeStamp
+}
+
+Appointment[icon: calendar] {
+  id Serial Primary Key
+  patient_id Foreign Key
+  doctor_id Foreign Key
+  appointment_date Date
+  appointment_time Time
+  appointment_status Enum ('Scheduled', 'Completed', 'Cancelled', 'No_show')
+  appointment_reason Varchar(255)
+  createdAt TimeStamp
+}
+
+Appointment.patient_id > Patient.id
+Appointment.doctor_id > Doctor.id
+
+Consultation[icon: doctor] {
+  id Serial Primary Key
+  appointment_id Foreign Key 
+  doctor_id Foreign Key
+  patient_id Foreign Key
+  visit_date Date
+  symptoms Text
+  diagnosis Text
+  prescription Text
+  notes Text
+  follow_up_date Date
+}
+
+Consultation.appointment_id - Appointment.id
+Consultation.doctor_id > Doctor.id
+Consultation.patient_id > Patient.id
+
+Diagnostic_Test[icon: test-tube] {
+  id Serial Primary Key
+  name Varchar(100) Not Null Unique
+  type Enum ('Blood', 'X_Ray', 'MRI', 'etc')
+  description Text
+  price Decimal (10, 2)
+  is_active Boolean
+}
+
+Test_Order[icon: test-tube] {
+  id Serial Primary Key
+  consultation_id Foreign Key Not Null Unique
+  test_id Foreign Key Not Null Unique
+  ordered_doctor_id Foreign Key
+  test_date Date
+  priority Enum ('Normal', 'Urgent')
+  status Enum ('Ordered', 'Sample Collected', 'Completed', 'Cancelled')
+  price Decimal (10, 2)
+  instruction Varchar(255)
+}
+
+Test_Order.consultation_id > Consultation.id
+Test_Order.test_id > Diagnostic_Test.id
+
+Report[icon: report] {
+  id Serial Primary Key
+  test_order_id Foreign Key
+  reviewed_doctor_id Foreign Key
+  generated_date Date
+  summary Text
+  file_URL Text
+  status Enum ('Pending', 'Ready', 'Delivered')
+}
+
+Report.test_order_id - Test_Order.id
+
+Payment[icon: money] {
+  id Serial Primary Key
+  patient_id Foreign Key
+  consultation_id Foreign Key
+  test_order_id Foreign Key
+  type Enum ('Consultation', 'Test')
+  amount Decimal (10, 2) Not Null
+  method Enum ('Cash', 'Card', 'UPI', 'Insurance')
+  status Enum ('Pending', 'Paid', 'Refunded')
+  transaction_id Varchar(100)
+  payment_date Date
+}
+
+Payment.patient_id > Patient.id
+Payment.consultation_id > Consultation.id
+Payment.test_order_id > Test_Order.id
