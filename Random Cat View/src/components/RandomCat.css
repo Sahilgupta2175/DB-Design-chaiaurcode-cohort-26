@@ -1,0 +1,247 @@
+.cat-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: clamp(1.5rem, 5vw, 4rem) 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Header */
+.cat-header {
+  text-align: center;
+}
+
+.cat-eyebrow {
+  display: inline-block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.cat-header h1 {
+  margin: 0.75rem 0 0.25rem;
+  font-family: "Young Serif", Georgia, serif;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.cat-subtitle {
+  margin: 0;
+  color: var(--text-muted);
+}
+
+/* Card */
+.cat-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.cat-media {
+  position: relative;
+  min-height: 440px;
+  background: var(--img-bg);
+}
+
+.cat-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: cat-fade-in 0.5s ease;
+  transition: opacity 0.3s, filter 0.3s;
+}
+
+.cat-card.is-loading .cat-media img {
+  opacity: 0.45;
+  filter: blur(3px);
+}
+
+.cat-placeholder {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  background:
+    repeating-linear-gradient(
+      45deg,
+      transparent 0 12px,
+      var(--border) 12px 13px
+    );
+}
+
+/* Info */
+.cat-info {
+  padding: clamp(1.5rem, 4vw, 2.5rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.cat-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.cat-origin,
+.cat-life {
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.cat-origin {
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.cat-life {
+  background: var(--chip-bg);
+  color: var(--chip-text);
+}
+
+.cat-name {
+  margin: 0;
+  font-family: "Young Serif", Georgia, serif;
+  font-size: clamp(1.75rem, 3.5vw, 2.25rem);
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+
+.cat-description {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.65;
+}
+
+.cat-traits {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cat-traits li {
+  padding: 0.3rem 0.7rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--chip-bg);
+  color: var(--chip-text);
+  font-size: 0.8rem;
+}
+
+.cat-empty {
+  margin: auto 0 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+}
+
+/* Button */
+.cat-button {
+  margin-top: auto;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.85rem 1.6rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: var(--accent-text);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s, box-shadow 0.2s;
+}
+
+.cat-button:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 8px 20px -8px var(--accent-ring);
+}
+
+.cat-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.cat-button:focus-visible {
+  outline: 3px solid var(--accent-ring);
+  outline-offset: 3px;
+}
+
+.cat-button:disabled {
+  background: var(--disabled-bg);
+  color: var(--disabled-text);
+  cursor: not-allowed;
+}
+
+.cat-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: cat-spin 0.7s linear infinite;
+}
+
+.cat-error {
+  margin: 0;
+  color: var(--error);
+  font-size: 0.9rem;
+}
+
+@keyframes cat-fade-in {
+  from {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+@keyframes cat-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cat-media img,
+  .cat-spinner {
+    animation: none;
+  }
+}
+
+/* Mobile: stack image above info */
+@media (max-width: 760px) {
+  .cat-card {
+    grid-template-columns: 1fr;
+  }
+
+  .cat-media {
+    min-height: 0;
+    aspect-ratio: 4 / 3;
+  }
+
+  .cat-button {
+    align-self: stretch;
+    justify-content: center;
+  }
+}
